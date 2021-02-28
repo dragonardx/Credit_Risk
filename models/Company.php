@@ -72,7 +72,7 @@ class Company
 
     private function assignValues($data)
     {
-        if (empty($this->field_1)) {
+        if (empty($data->Field1)) {
         } else {
             $this->field_1 = htmlspecialchars(strip_tags($data->Field1));
         }
@@ -107,7 +107,7 @@ class Company
 
     private function assignModel()
     {
-        if (substr($this->id, 1, 3) == '116' && substr($this->id, 1, 3) == '119') {
+        if (substr($this->id, 1, 3) == '116' || substr($this->id, 1, 3) == '119') {
             $this->model = 'A';
         } else {
             $this->model = 'B';
@@ -118,7 +118,7 @@ class Company
     {
         switch ($this->model) {
             case 'A':
-                if ($this->field_1) {
+                if (empty($this->field_1)) {
                     $this->factor_1 = $this->field_2;
                     $this->field_1 = null;
                 } else {
@@ -136,7 +136,11 @@ class Company
                 $this->lpt = $this->factor_1 + $this->factor_2 + $this->factor_3;
                 $this->beh = $this->factor_4;
                 $this->fin = $this->factor_6 + $this->factor_7;
-                $this->total = exp($this->lpt + $this->beh + $this->fin) / (exp($this->lpt + $this->beh + $this->fin) + 1);
+                $variable1 = (string)exp($this->lpt + $this->beh + $this->fin);
+                $variable2 = (string)(exp($this->lpt + $this->beh + $this->fin));
+                $variable1 = substr($variable1, 0, strpos($variable1, "E"));
+                $variable2 = substr($variable2, 0, strpos($variable2, "E"));
+                $this->total = round((float)$variable1, 10) / round((float)$variable2 +1, 10);
                 break;
 
             case 'B':
@@ -155,7 +159,11 @@ class Company
                 }
                 $this->lpt = $this->factor_1 + $this->factor_2;
                 $this->fin = $this->factor_6 + $this->factor_7;
-                $this->total = exp($this->lpt + $this->fin) / (exp($this->lpt + $this->fin) + 1);
+                $variable1 = (string)exp($this->lpt + $this->fin);
+                $variable2 = (string)(exp($this->lpt + $this->fin));
+                $variable1 = substr($variable1, 0, strpos($variable1, "E"));
+                $variable2 = substr($variable2, 0, strpos($variable2, "E"));
+                $this->total = round((float)$variable1, 10) / round((float)$variable2 +1, 10);
                 break;
         }
     }
